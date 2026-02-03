@@ -1,6 +1,9 @@
 local WidgetContainer = require("ui/widget/container/widgetcontainer")
 local UIManager = require("ui/uimanager")
 local InfoMessage = require("ui/widget/infomessage")
+local InputDialog = require("ui/widget/inputdialog")
+local DataStorage = require("datastorage")
+local LuaSettings = require("luasettings")
 local _ = require("gettext")
 local logger = require("logger")
 
@@ -16,12 +19,31 @@ local function show_msg(text, timeout)
 end
 
 function FileBrowser:init()
+    self.settings_data = LuaSettings:open(self:_settingsPath())
     if self.ui and self.ui.menu then
         self.ui.menu:registerToMainMenu(self)
     end
 end
 
+function FileBrowser:_settingsPath()
+    return DataStorage:getSettingsDir() .. "/filebrowser.lua"
+end
+
+function FileBrowser:_getExtensionsDirName()
+    return self.settings_data and self.settings_data.data and self.settings_data.data.extensions_dir_name or nil
+end
+
+function FileBrowser:_setExtensionsDirName(name)
+    if not self.settings_data then return end
+    self.settings_data.data.extensions_dir_name = name
+    self.settings_data:flush()
+end
+
 function FileBrowser:_baseDir()
+    local dir_name = self:_getExtensionsDirName()
+    if dir_name and dir_name ~= "" then
+        return "/mnt/us/extensions/" .. dir_name
+    end
     return self.path or "."
 end
 
@@ -54,6 +76,47 @@ function FileBrowser:addToMainMenu(menu_items)
         text = _("File Browser"),
         sorting_hint = "filemanager",
         sub_item_table = {
+            {
+                text_func = function()
+                    local name = self:_getExtensionsDirName()
+                    if name and name ~= "" then
+                        return _("MRPI dir: ") .. name
+                    end
+                    return _("MRPI dir: (plugin bundled)")
+                end,
+                keep_menu_open = true,
+                callback = function()
+                    local dialog
+                    dialog = InputDialog:new{
+                        title = _("Set MRPI dir name"),
+                        input_hint = "kindle-filebrowser",
+                        description = _("Only directory name under /mnt/us/extensions"),
+                        buttons = {{{
+                            text = _("Cancel"),
+                            callback = function()
+                                UIManager:close(dialog)
+                            end
+                        }, {
+                            text = _("OK"),
+                            is_enter_default = true,
+                            callback = function()
+                                local input_text = dialog:getInputText() or ""
+                                input_text = input_text:gsub("^%s+", ""):gsub("%s+$", "")
+                                if input_text == "" then
+                                    self:_setExtensionsDirName(nil)
+                                    show_msg(_("MRPI dir cleared"))
+                                else
+                                    self:_setExtensionsDirName(input_text)
+                                    show_msg(_("MRPI dir saved"))
+                                end
+                                UIManager:close(dialog)
+                            end
+                        }}}
+                    }
+                    UIManager:show(dialog)
+                    dialog:onShowKeyboard()
+                end
+            },
             {
                 text = _("Start"),
                 callback = function()
