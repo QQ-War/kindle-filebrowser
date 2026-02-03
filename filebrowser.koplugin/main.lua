@@ -74,7 +74,6 @@ function FileBrowser:addToMainMenu(menu_items)
 
     menu_items.filebrowser_main = {
         text = _("File Browser"),
-        sorting_hint = "filemanager",
         sub_item_table = {
             {
                 text_func = function()
