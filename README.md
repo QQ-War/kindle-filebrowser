@@ -21,10 +21,17 @@
 本仓库内已提供一个 KOReader 插件包装，可在 KOReader 内直接启动/停止 File Browser。
 
 ### 需要拷贝的文件
-将 `filebrowser.koplugin` 整个目录复制到 KOReader 的 `plugins` 目录，例如：
+将 `filebrowser.koplugin` 目录复制到 KOReader 的 `plugins` 目录，例如：
 ```
 /mnt/us/koreader/plugins/filebrowser.koplugin
 ```
+
+**如果你使用 MRPI 的 extensions 版本（推荐）**  
+插件目录内只包含两个文件：
+- `filebrowser.koplugin/_meta.lua`
+- `filebrowser.koplugin/main.lua`
+
+不需要复制 `filebrowser` 二进制或任何 `.sh` 脚本。
 
 ### 插件菜单
 在 KOReader 主菜单中会出现 **File Browser**，包含：
@@ -36,13 +43,14 @@
 - Update binary file
 - Reset
 
-### 可选：复用 MRPI 的 extensions 目录
+### 复用 MRPI 的 extensions 目录（必选）
 如果你已经在 `/mnt/us/extensions/` 中安装了 MRPI 版插件，可在 KOReader 菜单里设置目录名：
 - 进入 **File Browser** → **MRPI dir: ...**
 - 输入目录名（例如 `kindle-filebrowser`）
 - 插件将执行 `/mnt/us/extensions/<目录名>` 下的脚本
 
 若留空，会回退使用 KOReader 插件自身自带的二进制与脚本。
+（本仓库已移除自带二进制，因此请务必配置 MRPI 目录名）
 
 ## 其它说明
 * 提供核心功能的二进制文件`extensions/filebrowser/filebrowser`来自 https://github.com/filebrowser/filebrowser ，使用linux-armv7版本的release  
