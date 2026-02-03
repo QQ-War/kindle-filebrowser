@@ -16,6 +16,34 @@
 7. 服务关闭后，Kindle会恢复到可以正常熄屏休眠的状态，电源键也会恢复其本来功能。
 8. 如果有IP显示残留则意味着服务未正常退出，设备此时可能仍处在屏幕常亮不休眠的状态，请尝试通过点击【Kill】或重启设备来解决。相反，IP显示消失了则意味着服务已经完全关闭，不会有后台任务耗电。
 9. 如果看不到IP及其它提示，或者它们显示的位置不合适，可以在电脑上修改文件`COL.txt`中的数字，例如从`10`改到`20`可以让显示更靠右。
+
+## KOReader 插件使用方法
+本仓库内已提供一个 KOReader 插件包装，可在 KOReader 内直接启动/停止 File Browser。
+
+### 需要拷贝的文件
+将 `filebrowser.koplugin` 整个目录复制到 KOReader 的 `plugins` 目录，例如：
+```
+/mnt/us/koreader/plugins/filebrowser.koplugin
+```
+
+### 插件菜单
+在 KOReader 主菜单中会出现 **File Browser**，包含：
+- Start
+- Start (Auth)
+- Start (root path)
+- Show Status
+- Kill
+- Update binary file
+- Reset
+
+### 可选：复用 MRPI 的 extensions 目录
+如果你已经在 `/mnt/us/extensions/` 中安装了 MRPI 版插件，可在 KOReader 菜单里设置目录名：
+- 进入 **File Browser** → **MRPI dir: ...**
+- 输入目录名（例如 `kindle-filebrowser`）
+- 插件将执行 `/mnt/us/extensions/<目录名>` 下的脚本
+
+若留空，会回退使用 KOReader 插件自身自带的二进制与脚本。
+
 ## 其它说明
 * 提供核心功能的二进制文件`extensions/filebrowser/filebrowser`来自 https://github.com/filebrowser/filebrowser ，使用linux-armv7版本的release  
 * 有任何问题或建议欢迎提issue
